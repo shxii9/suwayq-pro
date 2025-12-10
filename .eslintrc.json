@@ -1,0 +1,16 @@
+﻿// .eslintrc.json
+{
+  "extends": ["next/core-web-vitals", "plugin:prettier/recommended"],
+  "plugins": ["prettier", "@typescript-eslint"],
+  "rules": {
+    "@typescript-eslint/no-use-before-define": "error",
+    "import/no-unresolved": "off",
+    "no-unused-vars": "off",
+    "prettier/prettier": ["error", { "endOfLine": "lf" }]
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module"
+  }
+}

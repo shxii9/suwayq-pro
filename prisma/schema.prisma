@@ -1,0 +1,80 @@
+// schema.prisma
+// هذا الملف يحدد هيكل قاعدة البيانات الخاصة بك (جداولها وعلاقاتها).
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ⚠️ تمت إزالة الـ datasource بالكامل من هنا ونقلها إلى prisma.config.ts
+
+// -----------------------------------------------------------
+// 1. جدول المستخدمين (User)
+// -----------------------------------------------------------
+model User {
+  id              String       @id @default(cuid())
+  email           String       @unique
+  password        String
+  name            String?
+  role            Role         @default(USER)
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  
+  listings        Listing[]
+  reportsFiled    Report[]     @relation("FiledReports")
+  reportsTargeted Report[]     @relation("TargetedReports")
+}
+
+// -----------------------------------------------------------
+// 2. جدول الإعلانات (Listing)
+// -----------------------------------------------------------
+model Listing {
+  id              String    @id @default(cuid())
+  title           String
+  description     String?
+  price           Float
+  location        String?
+  images          String[]
+  status          ListingStatus @default(PENDING)
+  
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  
+  reports         Report[]
+  
+  createdAt       DateTime  @default(now())
+  updated updatedAt
+}
+
+// -----------------------------------------------------------
+// 3. جدول البلاغات (Report)
+// -----------------------------------------------------------
+model Report {
+  id              String    @id @default(cuid())
+  reason          String
+  isResolved      Boolean   @default(false)
+  
+  listingId       String
+  listing         Listing   @relation(fields: [listingId], references: [id])
+
+  reporterId      String
+  reporter        User      @relation("FiledReports", fields: [reporterId], references: [id])
+
+  targetUserId    String
+  targetUser      User      @relation("TargetedReports", fields: [targetUserId], references: [id])
+  
+  createdAt       DateTime  @default(now())
+}
+
+
+// الأنواع (Enums)
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ListingStatus {
+  PENDING
+  ACTIVE
+  REJECTED
+  EXPIRED
+}
