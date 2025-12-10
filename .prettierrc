@@ -1,9 +1,8 @@
-﻿// .prettierrc
-{
+﻿{
   "semi": true,
-  "trailingComma": "all",
-  "singleQuote": true,
-  "printWidth": 100,
+  "singleQuote": false,
+  "jsxSingleQuote": false,
   "tabWidth": 2,
-  "endOfLine": "lf"
+  "printWidth": 120,
+  "trailingComma": "all"
 }
