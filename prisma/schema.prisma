@@ -4,7 +4,6 @@
 // ⚠️ الإضافة الحاسمة: تعريف مصدر البيانات (Datasource)
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 generator client {
