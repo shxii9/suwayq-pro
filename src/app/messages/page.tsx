@@ -3,7 +3,6 @@ import { User, Send } from "lucide-react";
 
 import Image from 'next/image';
 
-import Image from 'next/image';
 
 export default function Messages() {
   return (
@@ -41,5 +40,6 @@ export default function Messages() {
     </div>
   );
 }
+
 
 

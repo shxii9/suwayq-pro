@@ -6,7 +6,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 
 import Image from 'next/image';
 
-import Image from 'next/image';
 
 export default function AdminListings() {
     const listings = [
@@ -60,5 +59,6 @@ export default function AdminListings() {
         </div>
     );
 }
+
 
 
