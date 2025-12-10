@@ -4,7 +4,6 @@ import { BarChart3, Package, Eye } from "lucide-react";
 
 import Image from 'next/image';
 
-import Image from 'next/image';
 
 export default function Dashboard() {
   return (
@@ -57,5 +56,6 @@ export default function Dashboard() {
     </div>
   );
 }
+
 
 
