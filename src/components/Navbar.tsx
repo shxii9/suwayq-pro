@@ -1,4 +1,6 @@
-﻿import Link from "next/link";
+﻿'use client';
+
+import Link from "next/link";
 import { PlusCircle, Search, MessageCircle, User, LayoutDashboard, Shield } from "lucide-react";
 
 export function Navbar() {

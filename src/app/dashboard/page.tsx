@@ -1,4 +1,6 @@
-﻿import { Navbar } from "@/components/Navbar";
+﻿'use client';
+
+import { Navbar } from "@/components/Navbar";
 import { listings } from "@/lib/data";
 import { BarChart3, Package, Eye } from "lucide-react";
 

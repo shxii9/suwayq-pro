@@ -1,4 +1,6 @@
-﻿// src/app/admin/users/page.tsx
+﻿'use client';
+
+// src/app/admin/users/page.tsx
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"; // يجب إضافة مكتبة واجهة المستخدم
 import { Users, Trash2, ShieldOff } from "lucide-react";
 

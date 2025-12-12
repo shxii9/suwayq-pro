@@ -1,4 +1,6 @@
-﻿import { Navbar } from "@/components/Navbar";
+﻿'use client';
+
+import { Navbar } from "@/components/Navbar";
 import { ListingCard } from "@/components/ListingCard";
 import { listings, categories } from "@/lib/data";
 import { Search, ArrowLeft } from "lucide-react";
