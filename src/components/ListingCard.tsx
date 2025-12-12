@@ -1,4 +1,6 @@
-﻿import Link from "next/link";
+﻿'use client';
+
+import Link from "next/link";
 import { MapPin, Clock, Heart } from "lucide-react";
 
 export function ListingCard({ item }: { item: any }) {

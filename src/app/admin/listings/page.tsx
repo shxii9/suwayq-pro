@@ -1,4 +1,6 @@
-﻿// src/app/admin/listings/page.tsx
+﻿'use client';
+
+// src/app/admin/listings/page.tsx
 import { ShoppingBag, CheckCircle, Clock, Trash2 } from "lucide-react";
 
 // تم استخدام مكونات وهمية (UI) لضمان العمل

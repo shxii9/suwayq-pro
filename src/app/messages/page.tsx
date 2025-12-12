@@ -1,4 +1,6 @@
-﻿import { Navbar } from "@/components/Navbar";
+﻿'use client';
+
+import { Navbar } from "@/components/Navbar";
 import { User, Send } from "lucide-react";
 
 import Image from 'next/image';
