@@ -1,36 +1,41 @@
-﻿import { MetadataRoute } from 'next';
-import { PrismaClient } from '@prisma/client';
+import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const prisma = new PrismaClient();
   const baseUrl = 'https://suwayq-pro.vercel.app';
   
-  try {
-      // جلب آخر 100 إعلان نشط
-      const listings = await prisma.listing.findMany({
-        where: { status: 'ACTIVE' },
-        select: { id: true, updatedAt: true },
-        take: 100,
-        orderBy: { updatedAt: 'desc' }
-      });
+  // Static routes for sitemap
+  const routes = [
+    {
+      url: baseUrl,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 1.0,
+    },
+    {
+      url: `${baseUrl}/search`,
+      lastModified: new Date(),
+      changeFrequency: 'daily' as const,
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/dashboard`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/messages`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/create-listing`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    },
+  ];
 
-      const listingUrls = listings.map((listing) => ({
-        url: `${baseUrl}/listings/${listing.id}`,
-        lastModified: listing.updatedAt,
-        changeFrequency: 'daily' as const,
-        priority: 0.8,
-      }));
-
-      const routes = ['', '/search', '/dashboard', '/messages'].map((route) => ({
-        url: `${baseUrl}${route}`,
-        lastModified: new Date(),
-        changeFrequency: 'daily' as const,
-        priority: 1.0,
-      }));
-
-      return [...routes, ...listingUrls];
-  } catch (error) {
-      console.error('Sitemap generation error:', error);
-      return [];
-  }
+  return routes;
 }
