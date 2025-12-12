@@ -1,12 +1,24 @@
 ﻿import type { Metadata } from "next";
-import { Cairo } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const cairo = Cairo({ subsets: ["arabic"] });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "سُوَيق برو | السوق المفتوح",
-  description: "بيع واشتري كل شيء في الكويت",
+  title: {
+    template: "%s | سُوَيق PRO",
+    default: "سُوَيق PRO | منصة الإعلانات الأولى في الكويت",
+  },
+  description: "بيع واشترِ سيارات، عقارات، وإلكترونيات في الكويت بسهولة وأمان عبر منصة سويق برو.",
+  keywords: ["سوق الكويت", "حراج", "سيارات للبيع", "عقارات الكويت", "سويق برو"],
+  openGraph: {
+    title: "سُوَيق PRO",
+    description: "أفضل منصة للبيع والشراء في الكويت.",
+    url: "https://suwayq-pro.vercel.app",
+    siteName: "سُوَيق PRO",
+    locale: "ar_KW",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -16,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={cairo.className}>{children}</body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
