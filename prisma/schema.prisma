@@ -1,4 +1,4 @@
-// schema.prisma
+// schema fixed
 generator client {
   provider = "prisma-client-js"
 }
