@@ -6,6 +6,8 @@ import { ListingCard } from '@/components/ListingCard';
 import { listings, categories } from '@/lib/data';
 import { Search, Filter } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
