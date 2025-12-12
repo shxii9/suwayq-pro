@@ -5,6 +5,8 @@ import { Navbar } from '@/components/Navbar';
 import { categories } from '@/lib/data';
 import { Upload, AlertCircle } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function CreateListingPage() {
   const [formData, setFormData] = useState({
     title: '',

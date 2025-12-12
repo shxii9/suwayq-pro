@@ -5,6 +5,8 @@ import { listings } from '@/lib/data';
 import { MapPin, Calendar, User, Phone, Share2, Heart, Flag } from 'lucide-react';
 import { useState } from 'react';
 
+export const dynamic = 'force-dynamic';
+
 export default function ListingDetailPage({ params }: { params: { id: string } }) {
   const listing = listings.find((l) => l.id === params.id);
   const [isFavorite, setIsFavorite] = useState(false);
