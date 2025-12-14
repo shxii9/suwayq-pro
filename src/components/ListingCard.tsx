@@ -1,10 +1,19 @@
+<<<<<<< HEAD
 ﻿"use client";
+=======
+'use client';
+>>>>>>> 6d5984d4ad3b99c6bc28394e1f4b626b039da0fe
 
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Clock, Heart } from "lucide-react";
+import { Listing } from "@/types";
 
-export function ListingCard({ item }: { item: any }) {
+interface ListingCardProps {
+  item: Listing;
+}
+
+export function ListingCard({ item }: ListingCardProps) {
   return (
     <div className="group bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-xl transition duration-300 relative">
       {item.status === "promoted" && (
@@ -26,7 +35,7 @@ export function ListingCard({ item }: { item: any }) {
 	        />
         <div className="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/60 to-transparent p-3">
           <div className="flex items-center gap-1 text-white text-xs font-medium">
-            <MapPin size={12} /> {item.location}
+            <MapPin size={12} /> {item.location || 'غير محدد'}
           </div>
         </div>
       </div>
