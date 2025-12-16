@@ -1,36 +1,27 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Suwayq Pro
 
-## Getting Started
+مشروع Suwayq Pro — مستودع يحتوي أدوات وأتمتة لبناء ونشر مشروع ويب يعتمد على Next.js وPrisma.
 
-First, run the development server:
+ماذا يوجد في هذا الريبو
+- سكربتات PowerShell متعددة لأتمتة الإصلاح والبناء والنشر.
+- تكوينات لبيئة Node/Next/Tailwind.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+متطلبات
+- Node.js 18+
+- Docker (اختياري للتشغيل بالحاويات)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+التشغيل محليًا (أساسيات)
+1. انسخ ملف .env.example إلى .env واملأ القيم المطلوبة (لا ترفع .env إلى Git).
+2. npm ci
+3. npm run build
+4. npm start (أو تعليمات خاصة بالتشغيل حسب المشروع)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+ملاحظات أمان
+- تم إزالة ملف .env من هذه الفرع لأن وجود أسرار داخل المستودع خطر. تأكد من تدوير أي مفاتيح إذا كانت مشاركة سابقًا.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+المساهمة
+- رجاء اقرأ CONTRIBUTING.md قبل البدء.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ملفات مهمة
+- /.github : تَحتوي قوالب القضايا وCI
+- /scripts : توصيف السكربتات (scripts/README.md)
