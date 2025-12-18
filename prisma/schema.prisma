@@ -1,4 +1,4 @@
-// schema fixed
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,44 +9,24 @@ datasource db {
 }
 
 model User {
-  id              String      @id @default(cuid())
-  email           String      @unique
-  password        String
-  name            String?
-  role            Role        @default(USER)
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  listings        Listing[]
-  reportsFiled    Report[]    @relation("FiledReports")
-  reportsTargeted Report[]    @relation("TargetedReports")
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  listings  Listing[]
 }
 
 model Listing {
-  id              String      @id @default(cuid())
-  title           String
-  description     String?
-  price           Float
-  location        String?
-  images          String[]
-  status          ListingStatus @default(PENDING)
-  userId          String
-  user            User      @relation(fields: [userId], references: [id])
-  reports         Report[]
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-}
-
-model Report {
-  id              String      @id @default(cuid())
-  reason          String
-  isResolved      Boolean     @default(false)
-  listingId       String
-  listing         Listing   @relation(fields: [listingId], references: [id])
-  reporterId      String
-  reporter        User      @relation("FiledReports", fields: [reporterId], references: [id])
-  targetUserId    String
-  targetUser      User      @relation("TargetedReports", fields: [targetUserId], references: [id])
-  createdAt       DateTime    @default(now())
+  id        String   @id @default(cuid())
+  title     String
+  price     Float
+  status    ListingStatus @default(PENDING)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 enum Role {
@@ -58,5 +38,4 @@ enum ListingStatus {
   PENDING
   ACTIVE
   REJECTED
-  EXPIRED
 }

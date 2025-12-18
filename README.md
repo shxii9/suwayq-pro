@@ -1,27 +1,30 @@
-# Suwayq Pro
 
-مشروع Suwayq Pro — مستودع يحتوي أدوات وأتمتة لبناء ونشر مشروع ويب يعتمد على Next.js وPrisma.
+# 🚀 Suwayq Pro
 
-ماذا يوجد في هذا الريبو
-- سكربتات PowerShell متعددة لأتمتة الإصلاح والبناء والنشر.
-- تكوينات لبيئة Node/Next/Tailwind.
+Full-stack marketplace platform built with **Next.js 14**, **Prisma**, and **PostgreSQL (Supabase)**.
 
-متطلبات
-- Node.js 18+
-- Docker (اختياري للتشغيل بالحاويات)
+## ✨ Features
+- 🔐 Secure authentication (register / login / session)
+- 📊 Admin dashboard with real-time stats
+- 🗄️ Prisma ORM + PostgreSQL
+- ⚡ Production-ready architecture
+- 🛡️ Middleware route protection
 
-التشغيل محليًا (أساسيات)
-1. انسخ ملف .env.example إلى .env واملأ القيم المطلوبة (لا ترفع .env إلى Git).
-2. npm ci
-3. npm run build
-4. npm start (أو تعليمات خاصة بالتشغيل حسب المشروع)
+## 🧪 Local Development
+```bash
+npm install
+npm run dev
+```
 
-ملاحظات أمان
-- تم إزالة ملف .env من هذه الفرع لأن وجود أسرار داخل المستودع خطر. تأكد من تدوير أي مفاتيح إذا كانت مشاركة سابقًا.
+## 📦 Prisma
+```bash
+npx prisma migrate dev
+npx prisma generate
+```
 
-المساهمة
-- رجاء اقرأ CONTRIBUTING.md قبل البدء.
+## ☁️ Deployment
+Ready for **Vercel** with Supabase database.
 
-ملفات مهمة
-- /.github : تَحتوي قوالب القضايا وCI
-- /scripts : توصيف السكربتات (scripts/README.md)
+---
+
+Built with ❤️
