@@ -1,36 +1,21 @@
-import { NextResponse } from 'next/server';
-import { loginSchema } from '@/lib/validation';
-import { successResponse, errorResponse, validationErrorResponse } from '@/lib/api-response';
 
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/db";
+import { verifyPassword, setSession } from "@/lib/auth";
 
-    // Validate input
-    const validation = loginSchema.safeParse(body);
-    if (!validation.success) {
-      const errors = validation.error.flatten().fieldErrors;
-      return validationErrorResponse(errors as Record<string, string[]>);
-    }
+export async function POST(req: Request) {
+  const { email, password } = await req.json();
 
-    const { email, password } = validation.data;
-
-    // Temporary authentication (should be replaced with database lookup)
-    if (email === "admin@suwayq.com" && password === "123456") {
-      return successResponse(
-        {
-          id: '1',
-          email,
-          name: 'مسؤول سويق',
-          role: 'ADMIN',
-        },
-        'تم تسجيل الدخول بنجاح'
-      );
-    }
-
-    return errorResponse('بيانات الاعتماد غير صحيحة', undefined, 401);
-  } catch (error) {
-    console.error('Login error:', error);
-    return errorResponse('حدث خطأ في الخادم', undefined, 500);
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user) {
+    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }
+
+  const valid = await verifyPassword(password, user.password);
+  if (!valid) {
+    return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
+  }
+
+  setSession(user.id);
+  return NextResponse.json({ user });
 }
