@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-﻿// src/app/api/listings/create/route.ts
-import { NextResponse } from "next/server";
-
-export async function POST(request: Request) {
-  const data = await request.json();
-  console.log("New Listing Received:", data);
-  return NextResponse.json({ success: true, message: "تم إنشاء الإعلان بنجاح، بانتظار الموافقة." });
-=======
+// src/app/api/listings/create/route.ts
 import { NextResponse } from 'next/server';
 import { createListingSchema } from '@/lib/validation';
 import { successResponse, errorResponse, validationErrorResponse } from '@/lib/api-response';
@@ -24,7 +16,8 @@ export async function POST(request: Request) {
 
     const data = validation.data;
 
-    // Log the listing creation
+    // TODO: Implement actual database insertion using Prisma
+    // For now, we simulate a successful creation and log the data
     console.log('New Listing Created:', {
       ...data,
       createdAt: new Date().toISOString(),
@@ -44,5 +37,4 @@ export async function POST(request: Request) {
     console.error('Create listing error:', error);
     return errorResponse('حدث خطأ في الخادم', undefined, 500);
   }
->>>>>>> 6d5984d4ad3b99c6bc28394e1f4b626b039da0fe
 }
