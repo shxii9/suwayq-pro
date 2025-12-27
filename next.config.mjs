@@ -8,6 +8,13 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
+  experimental: {
+    isrMemoryCacheSize: 0,
+  },
+  onDemandEntries: {
+    maxInactiveAge: 60 * 1000,
+    pagesBufferLength: 5,
+  },
   images: {
     remotePatterns: [
       {
@@ -20,6 +27,8 @@ const nextConfig = {
       },
     ],
   },
+  skipTrailingSlashRedirect: true,
+  skipMiddlewareUrlNormalize: true,
   headers: async () => {
     return [
       {
@@ -42,5 +51,10 @@ const nextConfig = {
     ];
   },
 };
+
+// Suppress static generation errors
+if (process.env.NODE_ENV === 'production') {
+  nextConfig.staticPageGenerationTimeout = 120;
+}
 
 export default nextConfig;
