@@ -1,4 +1,4 @@
-﻿/** @type {import('next').NextConfig} */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -55,6 +55,7 @@ const nextConfig = {
 // Suppress static generation errors
 if (process.env.NODE_ENV === 'production') {
   nextConfig.staticPageGenerationTimeout = 120;
+  nextConfig.output = 'standalone';
 }
 
 export default nextConfig;
