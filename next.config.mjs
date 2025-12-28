@@ -9,7 +9,6 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
-    isrMemoryCacheSize: 0,
   },
   onDemandEntries: {
     maxInactiveAge: 60 * 1000,
