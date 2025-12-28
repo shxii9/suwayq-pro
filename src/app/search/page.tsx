@@ -1,4 +1,5 @@
-﻿"use client";
+﻿export const dynamic = 'force-dynamic';
+"use client";
 
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
@@ -69,3 +70,4 @@ export default function SearchPage() {
     </div>
   );
 }
+
