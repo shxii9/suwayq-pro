@@ -1,6 +1,5 @@
-﻿export const dynamic = 'force-dynamic';
-"use client";
-
+﻿"use client";
+export const dynamic = 'force-dynamic';
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Navbar } from "@/components/Navbar";
@@ -122,4 +121,5 @@ export default function CreateListingPage() {
     </div>
   );
 }
+
 
