@@ -1,26 +1,24 @@
 ﻿"use client";
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
-import { FavoriteButton } from "@/components/FavoriteButton";`nimport { ListingSkeleton } from "@/components/Skeleton";`nimport { MapPin, Search, Mic, MicOff, LayoutGrid, Car, Home as HomeIcon, Smartphone, Sofa } from "lucide-react";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { ListingSkeleton } from "@/components/Skeleton";
+import { MapPin, Search, Mic, MicOff, LayoutGrid, Car, Home as HomeIcon, Smartphone, Sofa } from "lucide-react";
+import toast from "react-hot-toast";
 
 const categories = [
   { label: "الكل", icon: LayoutGrid, value: "" },
-  { label: "سيارات", icon: Car, value: "CARS" },
-  { label: "عقارات", icon: HomeIcon, value: "REAL_ESTATE" },
-  { label: "إلكترونيات", icon: Smartphone, value: "ELECTRONICS" },
-  { label: "أثاث", icon: Sofa, value: "HOME" },
+  { label: "سيارات", icon: Car, value: "سيارة" },
+  { label: "عقارات", icon: HomeIcon, value: "عقار" },
+  { label: "أجهزة", icon: Smartphone, value: "جهاز" },
+  { label: "أثاث", icon: Sofa, value: "أثاث" },
 ];
 
 export default function Home() {
-  const [listings, setListings] = useState([]);
-  const [filteredListings, setFilteredListings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [isListening, setIsListening] = useState(false);
 
   const handleVoiceSearch = () => {
@@ -29,97 +27,67 @@ export default function Home() {
       toast.error("متصفحك لا يدعم البحث الصوتي");
       return;
     }
-
     const recognition = new SpeechRecognition();
     recognition.lang = "ar-SA";
-    recognition.interimResults = false;
-
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
-    
     recognition.onresult = (event: any) => {
       const transcript = event.results[0][0].transcript;
       setSearchQuery(transcript);
-      toast.success(`تم التعرف على: ${transcript}`);
     };
-
     recognition.start();
   };
 
-  useEffect(() => {
-    const url = selectedCategory ? `/api/listings?category=${selectedCategory}` : "/api/listings";
-    fetch(url)
-      .then(res => res.json())
-      .then(data => {
-        setListings(data);
-        setFilteredListings(data);
-        setLoading(false);
-      });
-  }, [selectedCategory]);
+  const listings = [
+    { id: "1", title: "آيفون 15 برو ماكس", price: 320, location: "الكويت العاصمة", category: "جهاز", image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?q=80&w=500" },
+    { id: "2", title: "تويوتا لاندكروزر 2024", price: 25000, location: "الجهراء", category: "سيارة", image: "https://images.unsplash.com/photo-1594502184342-2e12f877aa73?q=80&w=500" },
+  ];
 
-  useEffect(() => {
-    const filtered = listings.filter((item: any) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredListings(filtered);
-  }, [searchQuery, listings]);
+  const filteredListings = listings.filter(l => 
+    l.title.includes(searchQuery) && (selectedCategory === "" || l.category === selectedCategory)
+  );
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]" dir="rtl">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors duration-300" dir="rtl">
       <Navbar />
-     
-
-        {/* قسم الإعلانات المميزة */}
-        <div className="mb-12 overflow-hidden rounded-[3rem] bg-gradient-to-r from-blue-600 to-indigo-700 p-8 md:p-12 text-white relative">
+      <main className="container mx-auto px-4 pt-28 pb-20">
+        <div className="mb-12 overflow-hidden rounded-[3rem] bg-gradient-to-r from-blue-600 to-indigo-700 p-8 md:p-12 text-white relative text-right">
           <div className="relative z-10 max-w-lg">
-            <span className="bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-xs font-bold mb-4 inline-block">عروض حصرية ✨</span>
-            <h2 className="text-3xl md:text-5xl font-black mb-4 leading-tight">بع أغراضك بلمحة بصر في سويق PRO</h2>
-            <p className="text-blue-100 mb-8 font-medium">انضم لآلاف المستخدمين يومياً واعرض إعلاناتك أمام ملايين المشترين في الكويت.</p>
-            <Link href="/listings/create" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl transition-all inline-block active:scale-95">
-              ابدأ البيع الآن
-            </Link>
+            <h2 className="text-3xl md:text-5xl font-black mb-4 leading-tight">بع أغراضك بلمحة بصر</h2>
+            <Link href="/listings/create" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl transition-all inline-block">ابدأ البيع الآن</Link>
           </div>
-          <div className="absolute left-[-10%] top-[-20%] w-[60%] h-[140%] bg-white/10 rounded-full blur-3xl"></div>
         </div>
-        
-        {/* شريط البحث المطور */}
-        <div className="max-w-2xl mx-auto mb-12 relative group">
-          <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors" size={24} />
+        <div className="max-w-3xl mx-auto mb-12 relative group">
           <input 
-            type="text"
-            placeholder="ابحث عن سيارة، هاتف، أو أي شيء..."
-            className="w-full pr-14 pl-6 py-5 rounded-[2rem] border-0 bg-white shadow-xl shadow-blue-100/20 outline-none focus:ring-4 focus:ring-blue-500/10 text-lg transition-all"
+            type="text" 
+            placeholder="عن ماذا تبحث اليوم؟" 
+            value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-16 px-14 rounded-3xl bg-white dark:bg-gray-900 border-none shadow-2xl shadow-blue-100/50 dark:shadow-none text-lg font-bold outline-none focus:ring-2 focus:ring-blue-500 transition-all text-right"
           />
+          <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400" size={24} />
+          <button onClick={handleVoiceSearch} className={`absolute left-5 top-1/2 -translate-y-1/2 p-2 rounded-full ${isListening ? "bg-red-500 text-white animate-bounce" : "text-gray-400"}`}>
+            {isListening ? <MicOff size={22} /> : <Mic size={22} />}
+          </button>
         </div>
-
-        {/* شريط الفئات */}
-        <div className="flex items-center gap-4 overflow-x-auto pb-8 no-scrollbar mb-8">
-          {categories.map((cat) => (
-            <button key={cat.label} onClick={() => setSelectedCategory(cat.value)} className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-bold transition-all ${selectedCategory === cat.value ? "bg-blue-600 text-white" : "bg-white text-gray-500 hover:text-blue-600"}`}>
-              <cat.icon size={20} /> {cat.label}
-            </button>
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {filteredListings.map((item) => (
+            <div key={item.id} className="bg-white dark:bg-gray-900 rounded-[2.5rem] overflow-hidden shadow-sm border border-gray-100 dark:border-gray-800">
+              <div className="relative aspect-square">
+                <Image src={item.image} alt={item.title} fill className="object-cover" />
+                <div className="absolute top-4 right-4"><FavoriteButton listingId={item.id} /></div>
+              </div>
+              <div className="p-6 text-right">
+                <h3 className="font-black text-xl mb-2 dark:text-white">{item.title}</h3>
+                <div className="flex items-center text-gray-500 text-sm mb-4"><MapPin size={14} className="ml-1" />{item.location}</div>
+                <div className="flex items-center justify-between">
+                  <span className="text-2xl font-black text-blue-600 dark:text-blue-400">{item.price} د.ك</span>
+                  <Link href={`/listing/${item.id}`} className="bg-gray-100 dark:bg-gray-800 p-3 rounded-2xl hover:bg-blue-600 hover:text-white transition-all text-sm font-bold">التفاصيل</Link>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
-
-        {loading ? (
-           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <ListingSkeleton key={i} />)}
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {filteredListings.map((listing: any) => (
-              <Link href={`/listing/${listing.id}`} key={listing.id} className="bg-white rounded-[2.2rem] overflow-hidden border border-gray-100 hover:shadow-2xl transition-all hover:-translate-y-2">
-                <div className="relative aspect-square">
-                  <Image src={listing.image || "/placeholder.png"} alt="" fill className="object-cover" />
-                  <div className="absolute top-4 right-4 bg-white/90 px-3 py-1 rounded-xl text-blue-600 font-black text-sm">{listing.price} د.ك</div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-bold text-gray-900 mb-2 line-clamp-1">{listing.title}</h3>
-                  <div className="text-gray-400 text-xs flex items-center gap-1"><MapPin size={14}/> الكويت</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
       </main>
     </div>
   );
