@@ -37,7 +37,7 @@ export function Navbar() {
           >
             <Shield size={12} /> الإدارة
           </Link>
-          <Link href="/wallet" className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition relative">
+          <Link href="/profile" className="p-2 text-gray-500 hover:bg-gray-100 rounded-full transition relative">
             <User size={20} />
             <span className="absolute top-1 right-1 w-2 h-2 bg-green-500 rounded-full border border-white"></span>
           </Link>

@@ -1,13 +1,7 @@
 "use client";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";\nimport { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";\nimport { Input } from "@/components/ui/input";\nimport { Button } from "@/components/ui/button";
 export default function Login(){
  const r=useRouter();
- return (
-  <div className="p-10">
-    <h1>تسجيل الدخول</h1>
-    <button onClick={()=>{document.cookie="session=1";r.push("/dashboard")}}>
-      دخول
-    </button>
-  </div>
+ return (\n    <div className="flex justify-center items-center min-h-screen bg-gray-50">\n      <Card className="w-full max-w-md">\n        <CardHeader>\n          <CardTitle className="text-2xl text-center">تسجيل الدخول</CardTitle>\n        </CardHeader>\n        <CardContent>\n          <div className="grid gap-4">\n            <div className="grid gap-2">\n              <label htmlFor="email">البريد الإلكتروني</label>\n              <Input id="email" type="email" placeholder="example@domain.com" required />\n            </div>\n            <div className="grid gap-2">\n              <label htmlFor="password">كلمة المرور</label>\n              <Input id="password" type="password" required />\n            </div>\n            <Button className="w-full" onClick={() => { document.cookie = "session=1"; r.push("/dashboard") }}>\n              دخول\n            </Button>\n          </div>\n        </CardContent>\n      </Card>\n    </div>      دخول
  );
 }
