@@ -1,73 +1,79 @@
 ﻿"use client";
-import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
-import { StarRating } from "@/components/StarRating";
-import { Skeleton } from "@/components/Skeleton";
-import { QRCode } from "react-qrcode-logo";
-import { CheckCircle, MessageCircle, Eye, Phone, MapPin, Calendar, Share2 } from "lucide-react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import toast from "react-hot-toast";
+import { MapPin, Phone, MessageCircle, Share2, ShieldCheck, Clock, Tag } from "lucide-react";
 
-export default function ListingDetail() {
-  const { id } = useParams();
-  const [loading, setLoading] = useState(true);
-  const [currency, setCurrency] = useState("KWD");
-  const [views, setViews] = useState(0);
-  const rates = { KWD: 1, SAR: 12.2, USD: 3.25 };
-
-  const listing = {
-    title: "آيفون 15 برو ماكس - 256 جيجا",
-    price: 320,
-    description: "الجهاز بحالة الوكالة، نظيف جداً مع كامل الملحقات والكرتون.",
-    location: "الكويت العاصمة",
-    image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?q=80&w=800"
+export default function ListingDetails() {
+  const item = {
+    title: "آيفون 15 برو ماكس - شبه جديد",
+    price: "320",
+    location: "حولي، الكويت",
+    description: "الجهاز بحالة الوكالة، استعمال أسبوع واحد فقط. كامل الملحقات موجودة مع الكفالة.",
+    image: "https://images.unsplash.com/photo-1696446701796-da61225697cc?w=800",
+    user: "أحمد محمد",
+    date: "منذ ساعتين"
   };
 
-  useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
-    setViews(Math.floor(Math.random() * 500) + 120);
-  }, []);
-
-  if (loading) return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 pt-24" dir="rtl">
-      <Navbar />
-      <div className="container mx-auto px-4 max-w-6xl"><Skeleton className="aspect-video w-full" /></div>
-    </div>
-  );
-
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors duration-300" dir="rtl">
+    <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#020617] transition-colors duration-500" dir="rtl">
       <Navbar />
-      <main className="container mx-auto px-4 pt-28 pb-20 max-w-6xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 text-right">
-          <div className="relative aspect-square rounded-[3rem] overflow-hidden shadow-2xl">
-            <Image src={listing.image} alt={listing.title} fill className="object-cover" />
-          </div>
-          <div className="flex flex-col text-right">
-            <h1 className="text-4xl font-black mb-4 dark:text-white">{listing.title}</h1>
-            <div className="flex items-center gap-4 text-gray-500 mb-8 font-bold justify-end">
-              <span className="flex items-center gap-1"><Eye size={16} className="text-blue-500" /> {views} مشاهدة</span>
-              <span className="flex items-center gap-1"><Calendar size={16} /> منذ يومين</span>
-              <span className="flex items-center gap-1"><MapPin size={16} /> {listing.location}</span>
-            </div>
-            <div className="bg-blue-50 dark:bg-blue-900/20 p-6 rounded-3xl mb-8 flex justify-between items-center">
-              <select className="bg-white dark:bg-gray-800 rounded-xl px-3 py-2 text-sm font-bold outline-none border-none shadow-sm" value={currency} onChange={(e) => setCurrency(e.target.value)}>
-                <option value="KWD">د.ك</option>
-                <option value="SAR">ر.س</option>
-                <option value="USD">$ USD</option>
-              </select>
-              <div>
-                <span className="text-blue-600 dark:text-blue-400 text-3xl font-black">{(listing.price * rates[currency]).toLocaleString()}</span>
-                <span className="mr-2 font-bold text-blue-500">{currency}</span>
+      <main className="container mx-auto px-4 pt-32 pb-20">
+        <div className="flex flex-col lg:flex-row gap-10">
+          
+          {/* العمود الأيمن: المعلومات والاتصال */}
+          <div className="w-full lg:w-1/3 order-2 lg:order-1">
+            <div className="bg-white dark:bg-gray-900 rounded-[2.5rem] p-8 border border-gray-100 dark:border-gray-800 shadow-xl sticky top-32">
+              <div className="mb-6">
+                <span className="text-blue-600 dark:text-blue-400 font-black text-4xl">{item.price} <small className="text-sm">د.ك</small></span>
+              </div>
+              
+              <div className="flex items-center gap-4 mb-8 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-3xl">
+                <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-bold">أ</div>
+                <div>
+                  <h4 className="font-black dark:text-white">{item.user}</h4>
+                  <span className="text-xs text-gray-400">عضو موثوق منذ 2023</span>
+                </div>
+                <ShieldCheck className="mr-auto text-green-500" size={20} />
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button className="flex items-center justify-center gap-3 w-full py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-[1.5rem] font-black shadow-lg shadow-blue-500/30 transition-all active:scale-95">
+                  <Phone size={20} /> اتصل الآن
+                </button>
+                <button className="flex items-center justify-center gap-3 w-full py-5 bg-green-500 hover:bg-green-600 text-white rounded-[1.5rem] font-black shadow-lg shadow-green-500/30 transition-all active:scale-95">
+                  <MessageCircle size={20} /> واتساب
+                </button>
               </div>
             </div>
-            <StarRating />
-            <div className="mt-8 space-y-4">
-              <button className="w-full bg-green-600 hover:bg-green-700 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all"><Phone size={20} /> اتصل الآن</button>
-              <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl flex items-center justify-center gap-2 transition-all"><MessageCircle size={20} /> واتساب</button>
+          </div>
+
+          {/* العمود الأيسر: الصور والتفاصيل */}
+          <div className="w-full lg:w-2/3 order-1 lg:order-2">
+            <div className="bg-white dark:bg-gray-900 rounded-[3rem] overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm mb-8">
+              <div className="relative aspect-video">
+                <Image src={item.image} alt={item.title} fill className="object-cover" />
+              </div>
+              <div className="p-10 text-right">
+                <div className="flex flex-wrap gap-3 mb-6">
+                  <span className="bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-300 px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2">
+                    <Tag size={14} /> الكترونيات
+                  </span>
+                  <span className="bg-gray-50 dark:bg-gray-800 text-gray-500 px-4 py-1.5 rounded-full text-xs font-bold flex items-center gap-2">
+                    <Clock size={14} /> {item.date}
+                  </span>
+                </div>
+                <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white mb-4">{item.title}</h1>
+                <div className="flex items-center justify-end text-gray-400 gap-2 mb-8 font-bold">
+                  <span>{item.location}</span>
+                  <MapPin size={18} className="text-blue-500" />
+                </div>
+                <hr className="border-gray-100 dark:border-gray-800 mb-8" />
+                <h3 className="text-xl font-black mb-4 dark:text-white text-right">الوصف</h3>
+                <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-lg">{item.description}</p>
+              </div>
             </div>
           </div>
+
         </div>
       </main>
     </div>
