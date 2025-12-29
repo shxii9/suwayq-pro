@@ -6,51 +6,75 @@ const prisma = new PrismaClient()
 async function main() {
   const hashedPassword = await bcrypt.hash('password123', 10)
 
-  console.log('🧹 تنظيف شامل للقاعدة...')
+  console.log('🧹 تنظيف شامل لبناء مجتمع جديد...')
   await prisma.favorite.deleteMany({})
   await prisma.listing.deleteMany({})
   await prisma.user.deleteMany({})
 
-  console.log('👥 إنشاء مستخدمين موثوقين...')
+  // قائمة أسماء واقعية لتوليد المستخدمين
+  const userNames = [
+    'عبدالله الشمري', 'سعود المطيري', 'خالد العنزي', 'فهد الرشيدي', 
+    'مريم أبل', 'سارة الكندري', 'نورة العجمي', 'جاسم بهبهاني',
+    'يوسف القطان', 'بدر العوضي', 'أحمد الفضلي', 'فيصل الدوسري'
+  ]
+
+  console.log('👥 جاري إنشاء مجتمع من البائعين...')
+  const users = []
+  
+  // إنشاء الآدمن أولاً
   const admin = await prisma.user.create({
     data: { email: 'admin@suwayq.com', name: 'إدارة سويق PRO', password: hashedPassword, role: 'ADMIN' }
   })
+  users.push(admin)
 
-  const locations = ['السالمية', 'حولي', 'الشويخ', 'الأحمدي', 'الجهراء', 'العاصمة', 'الفروانية']
+  // إنشاء 15 مستخدم عشوائي
+  for (let i = 0; i < 15; i++) {
+    const name = userNames[i % userNames.length] + " " + (Math.floor(Math.random() * 90) + 10)
+    const user = await prisma.user.create({
+      data: {
+        email: `user${i}@suwayq.com`,
+        name: name,
+        password: hashedPassword,
+        role: 'USER'
+      }
+    })
+    users.push(user)
+  }
+
+  const locations = ['السالمية', 'حولي', 'الشويخ', 'الأحمدي', 'الجهراء', 'العاصمة', 'الفروانية', 'المنقف', 'القرين']
   const categories = [
-    { name: 'سيارات', min: 2000, max: 45000, terms: ['لكزس', 'تويوتا', 'مرسيدس', 'نيسان', 'فورد'] },
-    { name: 'أجهزة', min: 50, max: 600, terms: ['آيفون', 'ماكبوك', 'بلايستيشن', 'ساعة ذكية'] },
-    { name: 'عقارات', min: 250, max: 1500, terms: ['شقة للإيجار', 'دور واسع', 'ملحق قديم', 'استوديو مودرن'] },
-    { name: 'أثاث', min: 20, max: 800, terms: ['طقم كنب', 'طاولة طعام', 'غرفة نوم كاملة', 'سجاد إيراني'] }
+    { name: 'سيارات', min: 2500, max: 55000, terms: ['لكزس LX570', 'تويوتا جيب', 'مرسيدس G-Class', 'نيسان باترول', 'تاهو'] },
+    { name: 'أجهزة', min: 80, max: 900, terms: ['آيفون 15 برو', 'سوني 5', 'ماكبوك إير', 'ساعة آبل', 'شاشة سامسونج'] },
+    { name: 'عقارات', min: 300, max: 2000, terms: ['شقة غرفتين', 'دور أول واسع', 'ملحق عائلات', 'استوديو مفروش'] },
+    { name: 'أثاث', min: 40, max: 1200, terms: ['طقم قنفات', 'غرفة طعام مودرن', 'سرير ملكي', 'سجاد يدوي'] }
   ]
 
-  console.log('🏗️ جاري ضخ 100 إعلان احترافي بنظام التوقيت الموزع...')
+  console.log('🏗️ جاري توزيع 100 إعلان على المستخدمين الجدد...')
 
   for (let i = 0; i < 100; i++) {
     const cat = categories[Math.floor(Math.random() * categories.length)]
     const term = cat.terms[Math.floor(Math.random() * cat.terms.length)]
     const location = locations[Math.floor(Math.random() * locations.length)]
+    const randomUser = users[Math.floor(Math.random() * users.length)] // اختيار بائع عشوائي
     
-    // إنشاء تاريخ عشوائي خلال الـ 30 يوم الماضية
     const date = new Date()
-    date.setDate(date.getDate() - Math.floor(Math.random() * 30))
+    date.setDate(date.getDate() - Math.floor(Math.random() * 45)) // توزيع على مدار شهر ونصف
 
     await prisma.listing.create({
       data: {
-        title: `${term} - حالة ممتازة في ${location}`,
-        description: `إعلان رقم ${i+1}: عرض خاص ومميز لـ ${term}. المعاينة في منطقة ${location}. السعر نهائي والصور حقيقية.`,
+        title: `${term} - في ${location}`,
+        description: `عرض مميز من ${randomUser.name}. الحالة ممتازة والمعاينة متاحة في ${location}. السعر: ${cat.min + i} د.ك. للتواصل عبر الرسائل.`,
         price: Math.floor(Math.random() * (cat.max - cat.min + 1)) + cat.min,
         category: cat.name,
         status: 'ACTIVE',
-        userId: admin.id,
+        userId: randomUser.id,
         createdAt: date,
-        // استخدام محرك Unsplash لجلب صور فريدة بناءً على القسم والكلمة
-        images: [`https://source.unsplash.com/featured/?${encodeURIComponent(cat.name)},${encodeURIComponent(term)}&sig=${i}`]
+        images: [`https://picsum.photos/seed/${i + 123}/800/600`] // استخدام Picsum لضمان استقرار الصور وتنوعها
       }
     })
   }
 
-  console.log('✅ اكتملت عملية الضخ المليوني بنجاح!')
+  console.log('✅ اكتمل بناء المجتمع والبيانات بنجاح! تم إنشاء 16 مستخدم و100 إعلان.')
 }
 
 main().catch(e => { console.error(e); process.exit(1) }).finally(async () => { await prisma.$disconnect() })
