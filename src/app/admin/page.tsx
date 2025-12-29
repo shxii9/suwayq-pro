@@ -1,4 +1,5 @@
-﻿"use client";
+﻿import { AdminGuard } from '@/components/admin/AdminGuard';
+"use client";
 import { useState, useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Trash2, ShieldCheck, RefreshCw, ExternalLink, Package, Users, CheckCircle, ShieldAlert } from "lucide-react";
@@ -27,7 +28,7 @@ export default function AdminDashboard() {
     }
   };
 
-  return (
+  return (<AdminGuard>
     <div className="min-h-screen bg-[#F8FAFC] dark:bg-[#020617]" dir="rtl">
       <Toaster position="top-center" />
       <Navbar />
@@ -89,3 +90,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+</AdminGuard>)
