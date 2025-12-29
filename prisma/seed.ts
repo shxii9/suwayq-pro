@@ -6,33 +6,53 @@ const prisma = new PrismaClient()
 async function main() {
   const hashedPassword = await bcrypt.hash('password123', 10)
 
-  console.log('🧹 تنظيف شامل لبناء مجتمع جديد...')
+  console.log('🧹 تنظيف شامل لبناء مجتمع احترافي...')
   await prisma.favorite.deleteMany({})
   await prisma.listing.deleteMany({})
   await prisma.user.deleteMany({})
 
-  // قائمة أسماء واقعية لتوليد المستخدمين
-  const userNames = [
-    'عبدالله الشمري', 'سعود المطيري', 'خالد العنزي', 'فهد الرشيدي', 
-    'مريم أبل', 'سارة الكندري', 'نورة العجمي', 'جاسم بهبهاني',
-    'يوسف القطان', 'بدر العوضي', 'أحمد الفضلي', 'فيصل الدوسري'
+  const userNames = ['بدر المنصور', 'نورة المطيري', 'سليمان الفضلي', 'دلال الكندري', 'مشعل العتيبي', 'فاطمة بهبهاني', 'حسين العنزي', 'ليلى القطان']
+  const locations = ['السالمية', 'حولي', 'الشويخ الصناعية', 'المنقف', 'صباح الأحمد', 'الخالدية', 'مشرف']
+  
+  const categorySpecs = [
+    { 
+      name: 'سيارات', 
+      items: [
+        { title: 'تويوتا لاندكروزر GXR', img: 'land-cruiser' },
+        { title: 'نيسان باترول بلاتينيوم', img: 'nissan-patrol' },
+        { title: 'لكزس LX570 فل كامل', img: 'lexus' },
+        { title: 'مرسيدس S500 وكالة', img: 'mercedes-s-class' },
+        { title: 'فورد اف 150 رابتر', img: 'ford-raptor' }
+      ],
+      minPrice: 5000, maxPrice: 45000
+    },
+    { 
+      name: 'أجهزة', 
+      items: [
+        { title: 'آيفون 15 برو ماكس', img: 'iphone-15' },
+        { title: 'ماكبوك برو M3', img: 'macbook-pro' },
+        { title: 'بلايستيشن 5 مع يدتين', img: 'ps5' },
+        { title: 'ساعة رولكس صبمارينر', img: 'rolex' }
+      ],
+      minPrice: 100, maxPrice: 8000
+    },
+    { 
+      name: 'عقارات', 
+      items: [
+        { title: 'شقة فاخرة إطلالة بحرية', img: 'modern-apartment' },
+        { title: 'فيلا مودرن للبيع', img: 'modern-villa' },
+        { title: 'دور أرضي واسع للإيجار', img: 'house-interior' }
+      ],
+      minPrice: 400, maxPrice: 2500
+    }
   ]
 
-  console.log('👥 جاري إنشاء مجتمع من البائعين...')
+  console.log('👥 جاري إنشاء البائعين...')
   const users = []
-  
-  // إنشاء الآدمن أولاً
-  const admin = await prisma.user.create({
-    data: { email: 'admin@suwayq.com', name: 'إدارة سويق PRO', password: hashedPassword, role: 'ADMIN' }
-  })
-  users.push(admin)
-
-  // إنشاء 15 مستخدم عشوائي
-  for (let i = 0; i < 15; i++) {
-    const name = userNames[i % userNames.length] + " " + (Math.floor(Math.random() * 90) + 10)
+  for (let name of userNames) {
     const user = await prisma.user.create({
       data: {
-        email: `user${i}@suwayq.com`,
+        email: `${name.replace(' ', '.')}@suwayq.com`,
         name: name,
         password: hashedPassword,
         role: 'USER'
@@ -41,40 +61,35 @@ async function main() {
     users.push(user)
   }
 
-  const locations = ['السالمية', 'حولي', 'الشويخ', 'الأحمدي', 'الجهراء', 'العاصمة', 'الفروانية', 'المنقف', 'القرين']
-  const categories = [
-    { name: 'سيارات', min: 2500, max: 55000, terms: ['لكزس LX570', 'تويوتا جيب', 'مرسيدس G-Class', 'نيسان باترول', 'تاهو'] },
-    { name: 'أجهزة', min: 80, max: 900, terms: ['آيفون 15 برو', 'سوني 5', 'ماكبوك إير', 'ساعة آبل', 'شاشة سامسونج'] },
-    { name: 'عقارات', min: 300, max: 2000, terms: ['شقة غرفتين', 'دور أول واسع', 'ملحق عائلات', 'استوديو مفروش'] },
-    { name: 'أثاث', min: 40, max: 1200, terms: ['طقم قنفات', 'غرفة طعام مودرن', 'سرير ملكي', 'سجاد يدوي'] }
-  ]
-
-  console.log('🏗️ جاري توزيع 100 إعلان على المستخدمين الجدد...')
-
+  console.log('📦 جاري ضخ 100 إعلان ذكي...')
   for (let i = 0; i < 100; i++) {
-    const cat = categories[Math.floor(Math.random() * categories.length)]
-    const term = cat.terms[Math.floor(Math.random() * cat.terms.length)]
+    const cat = categorySpecs[i % categorySpecs.length]
+    const item = cat.items[Math.floor(Math.random() * cat.items.length)]
     const location = locations[Math.floor(Math.random() * locations.length)]
-    const randomUser = users[Math.floor(Math.random() * users.length)] // اختيار بائع عشوائي
+    const user = users[Math.floor(Math.random() * users.length)]
     
+    // حالة الإعلان (90% نشط، 10% تم البيع)
+    const status = Math.random() > 0.1 ? 'ACTIVE' : 'SOLD'
     const date = new Date()
-    date.setDate(date.getDate() - Math.floor(Math.random() * 45)) // توزيع على مدار شهر ونصف
+    date.setHours(date.getHours() - Math.floor(Math.random() * 500))
 
     await prisma.listing.create({
       data: {
-        title: `${term} - في ${location}`,
-        description: `عرض مميز من ${randomUser.name}. الحالة ممتازة والمعاينة متاحة في ${location}. السعر: ${cat.min + i} د.ك. للتواصل عبر الرسائل.`,
-        price: Math.floor(Math.random() * (cat.max - cat.min + 1)) + cat.min,
+        title: `${item.title} - ${location}`,
+        description: `للبيع ${item.title}. استعمال خفيف جداً، بحالة الوكالة. التواصل للجادين فقط في منطقة ${location}.`,
+        price: Math.floor(Math.random() * (cat.maxPrice - cat.minPrice)) + cat.minPrice,
         category: cat.name,
-        status: 'ACTIVE',
-        userId: randomUser.id,
+        location: location,
+        status: status,
+        userId: user.id,
         createdAt: date,
-        images: [`https://picsum.photos/seed/${i + 123}/800/600`] // استخدام Picsum لضمان استقرار الصور وتنوعها
+        // تحسين: جلب صورة دقيقة بناءً على اسم المنتج
+        images: [`https://source.unsplash.com/800x600/?${item.img.replace('-', ',')}`]
       }
     })
   }
 
-  console.log('✅ اكتمل بناء المجتمع والبيانات بنجاح! تم إنشاء 16 مستخدم و100 إعلان.')
+  console.log('✅ تم إنجاز النظام المليوني! القاعدة الآن تحاكي منصة تجارية ناضجة.')
 }
 
 main().catch(e => { console.error(e); process.exit(1) }).finally(async () => { await prisma.$disconnect() })
