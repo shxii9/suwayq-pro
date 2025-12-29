@@ -7,10 +7,11 @@ async function main() {
   const hashedPassword = await bcrypt.hash('password123', 10)
 
   console.log('🧹 تنظيف القاعدة...')
+  await prisma.favorite.deleteMany({})
   await prisma.listing.deleteMany({})
   await prisma.user.deleteMany({})
 
-  console.log('🔐 إنشاء مستخدمين بكلمات مرور مشفرة...')
+  console.log('🔐 إنشاء المستخدمين...')
   const admin = await prisma.user.create({
     data: {
       email: 'admin@suwayq.com',
@@ -20,25 +21,32 @@ async function main() {
     },
   })
 
-  const user1 = await prisma.user.create({
+  console.log('🚀 إضافة إعلانات تجريبية مع صور...')
+  await prisma.listing.create({
     data: {
-      email: 'ahmed@mail.com',
-      name: 'أحمد الناصري',
-      password: hashedPassword,
-    },
+      title: 'تويوتا لاندكروزر 2024',
+      description: 'VXR فل كامل، حالة الوكالة، شاشات وجلد',
+      price: 32000,
+      category: 'سيارات',
+      status: 'ACTIVE',
+      userId: admin.id,
+      images: ['https://images.unsplash.com/photo-1594502184342-2e12f877aa73?w=800']
+    }
   })
 
-  console.log('🚀 إضافة الإعلانات...')
-  await prisma.listing.createMany({
-    data: [
-      { title: 'تويوتا لاندكروزر 2024', description: 'VXR فل كامل، حالة الوكالة', price: 32000, category: 'CARS', userId: admin.id, status: 'ACTIVE' },
-      { title: 'فيلا فاخرة في بوشر', description: 'مساحة واسعة، تصميم مودرن، 5 غرف', price: 155000, category: 'REAL_ESTATE', userId: admin.id, status: 'ACTIVE' },
-      { title: 'ماكبوك برو M3 Max', description: 'أقوى نسخة، رام 64GB، جديد تماماً', price: 1600, category: 'ELECTRONICS', userId: user1.id, status: 'ACTIVE' },
-      { title: 'شقة فاخرة في الموالح', description: 'قريبة من سيتي سنتر، غرفتين وصالة', price: 45000, category: 'REAL_ESTATE', userId: user1.id, status: 'ACTIVE' }
-    ],
+  await prisma.listing.create({
+    data: {
+      title: 'ماكبوك برو M3 Max',
+      description: 'أقوى نسخة لعام 2024، رام 64GB',
+      price: 1600,
+      category: 'أجهزة',
+      status: 'ACTIVE',
+      userId: admin.id,
+      images: ['https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800']
+    }
   })
 
-  console.log('✅ تم التشفير وضخ البيانات بنجاح!')
+  console.log('✅ تم تحديث القاعدة والبيانات بنجاح!')
 }
 
 main().catch(e => { console.error(e); process.exit(1) }).finally(async () => { await prisma.$disconnect() })

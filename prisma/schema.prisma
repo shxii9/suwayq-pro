@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ListingStatus {
+  PENDING
+  ACTIVE
+  SOLD
+  REJECTED
+}
+
 model User {
   id        String    @id @default(cuid())
   email     String    @unique
@@ -16,27 +28,28 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   listings  Listing[]
+  favorites Favorite[]
 }
 
 model Listing {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   title       String
   description String?
   price       Float
   category    String?
+  images      String[]
   status      ListingStatus @default(PENDING)
   userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
+  user        User          @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+  favorites   Favorite[]
 }
 
-enum Role {
-  USER
-  ADMIN
-}
-
-enum ListingStatus {
-  PENDING
-  ACTIVE
-  REJECTED
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  listingId String
+  user      User     @relation(fields: [userId], references: [id])
+  listing   Listing  @relation(fields: [listingId], references: [id])
+  @@unique([userId, listingId])
 }
