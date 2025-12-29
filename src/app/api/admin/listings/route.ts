@@ -1,15 +1,14 @@
-import { prisma } from "@/lib/db";
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
-// Mark route as dynamic to prevent static generation
-export const dynamic = 'force-dynamic';
-
-export async function GET() {
+export async function DELETE(req: Request) {
   try {
-    const listings = await prisma.listing.findMany();
-    return NextResponse.json(listings);
+    const { id } = await req.json();
+    await prisma.listing.delete({
+      where: { id: id }
+    });
+    return NextResponse.json({ message: "تم حذف الإعلان بنجاح" }, { status: 200 });
   } catch (error) {
-    console.error('Error fetching listings:', error);
-    return NextResponse.json({ error: 'Failed to fetch listings' }, { status: 500 });
+    return NextResponse.json({ error: "فشل حذف الإعلان" }, { status: 500 });
   }
 }
