@@ -1,0 +1,134 @@
+// ملحق Schema لميزات البائعين والمشترين المتقدمة
+// يجب دمج هذه النماذج في schema.prisma الرئيسي
+
+// نموذج تقييمات البائعين
+model SellerRating {
+  id          String   @id @default(cuid())
+  sellerId    String
+  buyerId     String
+  rating      Int      // 1-5
+  comment     String?
+  orderId     String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([sellerId])
+  @@index([buyerId])
+}
+
+// نموذج إحصائيات البائع
+model SellerStats {
+  id                String   @id @default(cuid())
+  sellerId          String   @unique
+  totalSales        Int      @default(0)
+  totalRevenue      Float    @default(0)
+  averageRating     Float    @default(0)
+  totalReviews      Int      @default(0)
+  completedOrders   Int      @default(0)
+  cancelledOrders   Int      @default(0)
+  responseTime      Int?     // بالدقائق
+  lastActiveAt      DateTime @default(now())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// نموذج قائمة الأمنيات للمشترين
+model Wishlist {
+  id         String   @id @default(cuid())
+  userId     String
+  productId  String
+  addedAt    DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+}
+
+// نموذج المقارنة بين المنتجات
+model ProductComparison {
+  id         String   @id @default(cuid())
+  userId     String
+  productIds String[] // مصفوفة من معرفات المنتجات
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([userId])
+}
+
+// نموذج الإشعارات المتقدمة
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String   // order_update, price_drop, new_message, etc.
+  title     String
+  message   String
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+}
+
+// نموذج تتبع سلوك المستخدم (للتحليلات)
+model UserBehavior {
+  id           String   @id @default(cuid())
+  userId       String?
+  sessionId    String
+  action       String   // view_product, add_to_cart, search, etc.
+  metadata     Json?    // بيانات إضافية
+  ipAddress    String?
+  userAgent    String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([createdAt])
+}
+
+// نموذج العروض الخاصة والخصومات
+model Promotion {
+  id              String   @id @default(cuid())
+  code            String   @unique
+  type            String   // percentage, fixed_amount
+  value           Float
+  minPurchase     Float?
+  maxDiscount     Float?
+  startDate       DateTime
+  endDate         DateTime
+  usageLimit      Int?
+  usageCount      Int      @default(0)
+  isActive        Boolean  @default(true)
+  applicableFor   String[] // product_ids or categories
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive, startDate, endDate])
+}
+
+// نموذج برنامج الولاء
+model LoyaltyPoints {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  points      Int      @default(0)
+  totalEarned Int      @default(0)
+  totalSpent  Int      @default(0)
+  tier        String   @default("bronze") // bronze, silver, gold, platinum
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// نموذج سجل نقاط الولاء
+model LoyaltyTransaction {
+  id          String   @id @default(cuid())
+  userId      String
+  points      Int
+  type        String   // earned, spent, expired
+  reason      String
+  orderId     String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}

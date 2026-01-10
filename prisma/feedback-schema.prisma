@@ -1,0 +1,110 @@
+// نموذج التغذية الراجعة من المستخدمين
+
+model Feedback {
+  id          String   @id @default(cuid())
+  userId      String?
+  type        String   // bug, feature_request, improvement, general
+  category    String   // ui_ux, performance, functionality, other
+  title       String
+  description String   @db.Text
+  rating      Int?     // 1-5
+  page        String?
+  userAgent   String?
+  screenshot  String?
+  status      String   @default("pending") // pending, in_progress, resolved, closed
+  priority    String   @default("low") // low, medium, high
+  adminNotes  String?  @db.Text
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([status])
+  @@index([priority])
+  @@index([type])
+  @@index([createdAt])
+}
+
+// نموذج اختبارات قابلية الاستخدام (User Testing)
+model UserTest {
+  id            String   @id @default(cuid())
+  userId        String?
+  testType      String   // usability, a_b_test, survey
+  testName      String
+  scenario      String?  @db.Text
+  taskCompleted Boolean  @default(false)
+  timeSpent     Int?     // بالثواني
+  difficulty    Int?     // 1-5
+  satisfaction  Int?     // 1-5
+  notes         String?  @db.Text
+  metadata      Json?
+  createdAt     DateTime @default(now())
+
+  user          User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([testType])
+  @@index([createdAt])
+}
+
+// نموذج استطلاعات الرأي
+model Survey {
+  id          String   @id @default(cuid())
+  title       String
+  description String?  @db.Text
+  questions   Json     // مصفوفة من الأسئلة
+  isActive    Boolean  @default(true)
+  targetUsers String?  // all, buyers, sellers, specific_segment
+  startDate   DateTime
+  endDate     DateTime?
+  createdBy   String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  responses   SurveyResponse[]
+
+  @@index([isActive])
+  @@index([startDate, endDate])
+}
+
+// نموذج إجابات الاستطلاعات
+model SurveyResponse {
+  id         String   @id @default(cuid())
+  surveyId   String
+  userId     String?
+  answers    Json     // مصفوفة من الإجابات
+  completedAt DateTime @default(now())
+
+  survey     Survey   @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  user       User?    @relation(fields: [userId], references: [id])
+
+  @@index([surveyId])
+  @@index([userId])
+  @@index([completedAt])
+}
+
+// نموذج تتبع الأخطاء والمشاكل
+model ErrorLog {
+  id          String   @id @default(cuid())
+  userId      String?
+  errorType   String   // frontend, backend, api
+  errorCode   String?
+  message     String   @db.Text
+  stack       String?  @db.Text
+  page        String?
+  userAgent   String?
+  severity    String   @default("medium") // low, medium, high, critical
+  status      String   @default("new") // new, investigating, fixed, wont_fix
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+
+  user        User?    @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([errorType])
+  @@index([severity])
+  @@index([status])
+  @@index([createdAt])
+}
