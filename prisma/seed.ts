@@ -6,90 +6,39 @@ const prisma = new PrismaClient()
 async function main() {
   const hashedPassword = await bcrypt.hash('password123', 10)
 
-  console.log('🧹 تنظيف شامل لبناء مجتمع احترافي...')
-  await prisma.favorite.deleteMany({})
+  console.log('🧹 تنظيف القاعدة...')
   await prisma.listing.deleteMany({})
   await prisma.user.deleteMany({})
 
-  const userNames = ['بدر المنصور', 'نورة المطيري', 'سليمان الفضلي', 'دلال الكندري', 'مشعل العتيبي', 'فاطمة بهبهاني', 'حسين العنزي', 'ليلى القطان']
-  const locations = ['السالمية', 'حولي', 'الشويخ الصناعية', 'المنقف', 'صباح الأحمد', 'الخالدية', 'مشرف']
-  
-  const categorySpecs = [
-    { 
-      name: 'سيارات', 
-      items: [
-        { title: 'تويوتا لاندكروزر GXR', img: 'land-cruiser' },
-        { title: 'نيسان باترول بلاتينيوم', img: 'nissan-patrol' },
-        { title: 'لكزس LX570 فل كامل', img: 'lexus' },
-        { title: 'مرسيدس S500 وكالة', img: 'mercedes-s-class' },
-        { title: 'فورد اف 150 رابتر', img: 'ford-raptor' }
-      ],
-      minPrice: 5000, maxPrice: 45000
+  console.log('🔐 إنشاء مستخدمين بكلمات مرور مشفرة...')
+  const admin = await prisma.user.create({
+    data: {
+      email: 'admin@suwayq.com',
+      name: 'إدارة السويق',
+      password: hashedPassword,
+      role: 'ADMIN',
     },
-    { 
-      name: 'أجهزة', 
-      items: [
-        { title: 'آيفون 15 برو ماكس', img: 'iphone-15' },
-        { title: 'ماكبوك برو M3', img: 'macbook-pro' },
-        { title: 'بلايستيشن 5 مع يدتين', img: 'ps5' },
-        { title: 'ساعة رولكس صبمارينر', img: 'rolex' }
-      ],
-      minPrice: 100, maxPrice: 8000
+  })
+
+  const user1 = await prisma.user.create({
+    data: {
+      email: 'ahmed@mail.com',
+      name: 'أحمد الناصري',
+      password: hashedPassword,
     },
-    { 
-      name: 'عقارات', 
-      items: [
-        { title: 'شقة فاخرة إطلالة بحرية', img: 'modern-apartment' },
-        { title: 'فيلا مودرن للبيع', img: 'modern-villa' },
-        { title: 'دور أرضي واسع للإيجار', img: 'house-interior' }
-      ],
-      minPrice: 400, maxPrice: 2500
-    }
-  ]
+  })
 
-  console.log('👥 جاري إنشاء البائعين...')
-  const users = []
-  for (let name of userNames) {
-    const user = await prisma.user.create({
-      data: {
-        email: `${name.replace(' ', '.')}@suwayq.com`,
-        name: name,
-        password: hashedPassword,
-        role: 'USER'
-      }
-    })
-    users.push(user)
-  }
+  console.log('🚀 إضافة الإعلانات...')
+  await prisma.listing.createMany({
+    data: [
+      { title: 'تويوتا لاندكروزر 2024', description: 'VXR فل كامل، حالة الوكالة', price: 32000, category: 'CARS', userId: admin.id, status: 'ACTIVE' },
+      { title: 'فيلا فاخرة في بوشر', description: 'مساحة واسعة، تصميم مودرن، 5 غرف', price: 155000, category: 'REAL_ESTATE', userId: admin.id, status: 'ACTIVE' },
+      { title: 'ماكبوك برو M3 Max', description: 'أقوى نسخة، رام 64GB، جديد تماماً', price: 1600, category: 'ELECTRONICS', userId: user1.id, status: 'ACTIVE' },
+      { title: 'شقة فاخرة في الموالح', description: 'قريبة من سيتي سنتر، غرفتين وصالة', price: 45000, category: 'REAL_ESTATE', userId: user1.id, status: 'ACTIVE' }
+    ],
+  })
 
-  console.log('📦 جاري ضخ 100 إعلان ذكي...')
-  for (let i = 0; i < 100; i++) {
-    const cat = categorySpecs[i % categorySpecs.length]
-    const item = cat.items[Math.floor(Math.random() * cat.items.length)]
-    const location = locations[Math.floor(Math.random() * locations.length)]
-    const user = users[Math.floor(Math.random() * users.length)]
-    
-    // حالة الإعلان (90% نشط، 10% تم البيع)
-    const status = Math.random() > 0.1 ? 'ACTIVE' : 'SOLD'
-    const date = new Date()
-    date.setHours(date.getHours() - Math.floor(Math.random() * 500))
-
-    await prisma.listing.create({
-      data: {
-        title: `${item.title} - ${location}`,
-        description: `للبيع ${item.title}. استعمال خفيف جداً، بحالة الوكالة. التواصل للجادين فقط في منطقة ${location}.`,
-        price: Math.floor(Math.random() * (cat.maxPrice - cat.minPrice)) + cat.minPrice,
-        category: cat.name,
-        location: location,
-        status: status,
-        userId: user.id,
-        createdAt: date,
-        // تحسين: جلب صورة دقيقة بناءً على اسم المنتج
-        images: [`https://source.unsplash.com/800x600/?${item.img.replace('-', ',')}`]
-      }
-    })
-  }
-
-  console.log('✅ تم إنجاز النظام المليوني! القاعدة الآن تحاكي منصة تجارية ناضجة.')
+  console.log('✅ تم التشفير وضخ البيانات بنجاح!')
 }
 
 main().catch(e => { console.error(e); process.exit(1) }).finally(async () => { await prisma.$disconnect() })

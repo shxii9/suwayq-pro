@@ -1,36 +1,61 @@
 ﻿"use client";
-import Image from "next/image";
-import { Star, ShieldCheck, MapPin } from "lucide-react";
 
-export function ListingCard({ item }: any) {
-  // افترضنا أن الإعلان المميز يأتي بـ isPromoted: true من القاعدة
-  const isPromoted = item.price > 10000; // مثال فقط للتمييز البصري حالياً
+import Link from "next/link";
+import Image from "next/image";
+
+type ListingCardProps = {
+  item: {
+    id: string;
+    title: string;
+    price: number;
+    description?: string;
+    category?: string;
+    image?: string;
+  };
+};
+
+export function ListingCard({ item }: ListingCardProps) {
+  // صورة افتراضية حسب الفئة لجعل الموقع يبدو ممتلئاً واحترافياً
+  const defaultImages: Record<string, string> = {
+    CARS: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400&q=80",
+    REAL_ESTATE: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=400&q=80",
+    ELECTRONICS: "https://images.unsplash.com/photo-1498049794561-7780e7231661?w=400&q=80",
+    DEFAULT: "https://images.unsplash.com/photo-1586717791821-3f44a563eb4c?w=400&q=80"
+  };
+
+  const displayImage = item.image || defaultImages[item.category || "DEFAULT"];
 
   return (
-    <div className={`relative bg-white dark:bg-gray-900 rounded-[2.5rem] border transition-all duration-500 hover:-translate-y-2 ${isPromoted ? 'border-yellow-400 shadow-xl shadow-yellow-500/10' : 'border-slate-100 dark:border-gray-800'}`}>
-      
-      {isPromoted && (
-        <div className="absolute -top-3 -right-3 z-20 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-4 py-1 rounded-full text-[10px] font-black shadow-lg flex items-center gap-1">
-          <Star size={12} fill="white" /> مميز
+    <Link href={`/listing/${item.id}`} className="block group">
+      <div className="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 transform group-hover:-translate-y-1">
+        <div className="relative h-48 w-full">
+          <Image
+            src={displayImage}
+            alt={item.title}
+            fill
+            className="object-cover"
+          />
+          <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg text-xs font-bold text-blue-600 shadow-sm">
+            {item.category === 'CARS' ? 'سيارة' : item.category === 'REAL_ESTATE' ? 'عقار' : 'إعلان'}
+          </div>
         </div>
-      )}
-
-      <div className="relative h-56 rounded-t-[2.5rem] overflow-hidden">
-        <Image src={item.images?.[0] || 'https://picsum.photos/400/300'} alt={item.title} fill className="object-cover" />
+        
+        <div className="p-4">
+          <h3 className="font-bold text-gray-800 text-lg line-clamp-1 group-hover:text-blue-600 transition-colors">
+            {item.title}
+          </h3>
+          <p className="text-gray-500 text-sm mt-1 line-clamp-2 h-10">
+            {item.description || "لا يوجد وصف متاح حالياً لهذا الإعلان."}
+          </p>
+          
+          <div className="mt-4 flex items-center justify-between border-t pt-3">
+            <span className="text-xl font-black text-orange-500">
+              {item.price.toLocaleString()} <span className="text-xs font-normal text-gray-400">د.ك</span>
+            </span>
+            <span className="text-blue-600 text-xs font-bold">تفاصيل أكثر ←</span>
+          </div>
+        </div>
       </div>
-
-      <div className="p-6">
-        <h3 className="font-black text-lg dark:text-white line-clamp-1">{item.title}</h3>
-        <div className="flex items-center gap-2 mt-2 text-slate-400 text-xs font-bold">
-           <MapPin size={14} /> {item.location}
-        </div>
-        <div className="mt-6 flex justify-between items-center">
-           <span className="text-2xl font-black text-blue-600">{item.price} <span className="text-xs">د.ك</span></span>
-           <div className={`px-4 py-2 rounded-xl text-[10px] font-black ${isPromoted ? 'bg-yellow-400 text-white' : 'bg-slate-100 dark:bg-gray-800 dark:text-white'}`}>
-              تفاصيل
-           </div>
-        </div>
-      </div>
-    </div>
+    </Link>
   );
 }
