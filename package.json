@@ -7,6 +7,7 @@
         "build": "prisma generate && next build",
         "start": "next start",
         "lint": "next lint",
+        "test": "jest",
         "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
         "quality": "npm run format && npm run lint",
         "prisma:generate": "prisma generate",
