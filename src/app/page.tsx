@@ -1,10 +1,12 @@
-﻿"use client";
-
+"use client";
 import { useEffect, useState } from "react";
 import { Navbar } from "@/components/Navbar";
 import Image from "next/image";
 import Link from "next/link";
-import { FavoriteButton } from "@/components/FavoriteButton";`nimport { ListingSkeleton } from "@/components/Skeleton";`nimport { MapPin, Search, Mic, MicOff, LayoutGrid, Car, Home as HomeIcon, Smartphone, Sofa } from "lucide-react";
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { ListingSkeleton } from "@/components/Skeleton";
+import { MapPin, Search, Mic, MicOff, LayoutGrid, Car, Home as HomeIcon, Smartphone, Sofa } from "lucide-react";
+import toast from "react-hot-toast";
 
 const categories = [
   { label: "الكل", icon: LayoutGrid, value: "" },
@@ -20,7 +22,6 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-
   const [isListening, setIsListening] = useState(false);
 
   const handleVoiceSearch = () => {
@@ -29,11 +30,9 @@ export default function Home() {
       toast.error("متصفحك لا يدعم البحث الصوتي");
       return;
     }
-
     const recognition = new SpeechRecognition();
     recognition.lang = "ar-SA";
     recognition.interimResults = false;
-
     recognition.onstart = () => setIsListening(true);
     recognition.onend = () => setIsListening(false);
     
@@ -42,7 +41,6 @@ export default function Home() {
       setSearchQuery(transcript);
       toast.success(`تم التعرف على: ${transcript}`);
     };
-
     recognition.start();
   };
 
@@ -52,28 +50,30 @@ export default function Home() {
       .then(res => res.json())
       .then(data => {
         setListings(data);
-        setFilteredListings(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("فشل تحميل الإعلانات");
         setLoading(false);
       });
   }, [selectedCategory]);
 
   useEffect(() => {
-    const filtered = listings.filter((item: any) =>
-      item.title.toLowerCase().includes(searchQuery.toLowerCase())
+    const filtered = listings.filter((listing: any) =>
+      listing.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      listing.description?.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredListings(filtered);
   }, [searchQuery, listings]);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]" dir="rtl">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800" dir="rtl">
       <Navbar />
-     
-
-        {/* قسم الإعلانات المميزة */}
-        <div className="mb-12 overflow-hidden rounded-[3rem] bg-gradient-to-r from-blue-600 to-indigo-700 p-8 md:p-12 text-white relative">
-          <div className="relative z-10 max-w-lg">
-            <span className="bg-white/20 backdrop-blur-md px-4 py-1 rounded-full text-xs font-bold mb-4 inline-block">عروض حصرية ✨</span>
-            <h2 className="text-3xl md:text-5xl font-black mb-4 leading-tight">بع أغراضك بلمحة بصر في سويق PRO</h2>
+      <main className="container mx-auto px-4 pt-32 pb-16">
+        {/* البطل */}
+        <div className="relative mb-16 rounded-[3rem] bg-gradient-to-r from-blue-600 to-blue-800 text-white p-12 overflow-hidden">
+          <div className="relative z-10">
+            <h1 className="text-5xl font-black mb-4">اعرض منتجاتك الآن</h1>
             <p className="text-blue-100 mb-8 font-medium">انضم لآلاف المستخدمين يومياً واعرض إعلاناتك أمام ملايين المشترين في الكويت.</p>
             <Link href="/listings/create" className="bg-orange-500 hover:bg-orange-600 text-white px-8 py-4 rounded-2xl font-black shadow-xl transition-all inline-block active:scale-95">
               ابدأ البيع الآن
@@ -103,7 +103,9 @@ export default function Home() {
         </div>
 
         {loading ? (
-           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <ListingSkeleton key={i} />)}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => <ListingSkeleton key={i} />)}
+          </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {filteredListings.map((listing: any) => (

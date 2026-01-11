@@ -79,7 +79,7 @@
 ### المتطلبات
 - Node.js 20+
 - pnpm 8+
-- PostgreSQL 14+
+- PostgreSQL 14+ (أو Docker)
 
 ### التثبيت
 
@@ -105,11 +105,53 @@ pnpm dev
 
 ---
 
+## 🐳 إعداد قاعدة البيانات باستخدام Docker
+
+إذا كنت تريد تشغيل قاعدة بيانات PostgreSQL محليًا بدون تثبيتها على نظامك، يمكنك استخدام Docker:
+
+### المتطلبات
+- Docker و Docker Compose مثبتة على جهازك
+
+### التشغيل
+
+```bash
+# تشغيل حاوية PostgreSQL في الخلفية
+docker-compose up -d
+
+# التحقق من أن الحاوية تعمل
+docker-compose ps
+
+# عرض السجلات (اختياري)
+docker-compose logs -f db
+```
+
+### بيانات الاتصال
+
+بعد تشغيل الحاوية، استخدم بيانات الاتصال التالية في ملف `.env`:
+
+```bash
+DATABASE_URL="postgresql://suwayq_user:123456@localhost:5432/suwayq_db"
+```
+
+### إيقاف قاعدة البيانات
+
+```bash
+# إيقاف الحاوية
+docker-compose down
+
+# إيقاف الحاوية وحذف البيانات
+docker-compose down -v
+```
+
+---
+
 ## 📚 التوثيق
 
 - **[دليل i18n](./docs/I18N_GUIDE.md)**: إدارة اللغات المتعددة
 - **[دليل API](./docs/API_GUIDE.md)**: توثيق نقاط النهاية
 - **[دليل المساهمة](./CONTRIBUTING.md)**: كيفية المساهمة
+- **[تقرير الفحص](./Suwayq_Pro_Audit_Report.md)**: تقرير شامل عن جودة المشروع
+- **[الإصلاحات والتوصيات](./FIXES_AND_RECOMMENDATIONS.md)**: إصلاحات مفصلة وتوصيات
 
 ---
 
@@ -128,10 +170,12 @@ pnpm test:watch        # وضع المراقبة
 نرحب بجميع المساهمات!
 
 1. Fork المشروع
-2. أنشئ فرع للميزة
-3. Commit التغييرات
-4. Push إلى الفرع
+2. أنشئ فرع للميزة (`git checkout -b feature/amazing-feature`)
+3. Commit التغييرات (`git commit -m 'Add amazing feature'`)
+4. Push إلى الفرع (`git push origin feature/amazing-feature`)
 5. افتح Pull Request
+
+يرجى قراءة [دليل المساهمة](./CONTRIBUTING.md) قبل البدء.
 
 ---
 
@@ -144,6 +188,19 @@ pnpm test:watch        # وضع المراقبة
 ## 👥 الفريق
 
 - **المطور الرئيسي**: [@shxii9](https://github.com/shxii9)
+- **تحسينات وإصلاحات**: [@manus-ai](https://github.com/manus-ai)
+
+---
+
+## 🔒 الأمان
+
+إذا وجدت ثغرة أمنيّةً، الرجاء عدم فتح issue عام. بدلاً من ذلك، يرجى التواصل عبر البريد الإلكتروني أو قراءة [سياسة الأمان](./SECURITY.md).
+
+---
+
+## 📞 الدعم
+
+للحصول على الدعم أو الإبلاغ عن مشاكل، يرجى فتح [issue](https://github.com/shxii9/suwayq-pro/issues) جديد.
 
 ---
 

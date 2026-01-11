@@ -1,23 +1,37 @@
-﻿import { NextResponse } from "next/server";
-import type { NextRequest } from "next/request";
+/**
+ * Middleware for NextAuth protection
+ * 
+ * This middleware protects routes that require authentication
+ * and redirects unauthenticated users to the login page.
+ */
 
-export function middleware(request: NextRequest) {
-  const session = request.cookies.get("session");
+import { withAuth } from "next-auth/middleware";
+import { NextResponse } from "next/server";
 
-  // الصفحات التي تتطلب تسجيل دخول
-  const protectedPaths = ["/listings/create", "/my-listings"];
-  
-  const isProtected = protectedPaths.some(path => 
-    request.nextUrl.pathname.startsWith(path)
-  );
+export const middleware = withAuth(
+  function middleware(req) {
+    // Check if user is authenticated
+    if (req.nextauth.token) {
+      return NextResponse.next();
+    }
 
-  if (isProtected && !session) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    // Redirect to login if not authenticated
+    return NextResponse.redirect(new URL("/login", req.url));
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
   }
+);
 
-  return NextResponse.next();
-}
-
+// Protect these routes
 export const config = {
-  matcher: ["/listings/create", "/my-listings"],
+  matcher: [
+    "/dashboard/:path*",
+    "/admin/:path*",
+    "/create-listing/:path*",
+    "/my-listings/:path*",
+    "/settings/:path*",
+  ],
 };

@@ -1,3 +1,14 @@
+# ملف التوصيات والإصلاحات المقترحة لمشروع Suwayq Pro
+
+## القسم الأول: الإصلاحات الحتمية (Critical Fixes)
+
+### 1. إصلاح ملف `src/app/listing/[id]/page.tsx`
+
+**المشكلة:** الملف يحتوي على كود مدمج بشكل غير صحيح مع محارف خاصة.
+
+**الحل:** إعادة كتابة الملف بالكامل. إليك نموذج مقترح:
+
+```typescript
 "use client";
 
 import { Skeleton } from "@/components/Skeleton";
@@ -169,3 +180,212 @@ export default function ListingDetail() {
     </div>
   );
 }
+```
+
+### 2. إصلاح ملف `src/app/page.tsx`
+
+**المشكلة:** وجود محارف خاصة في مسارات الاستيراد.
+
+**الحل:** تصحيح السطر 7 ليصبح:
+
+```typescript
+import { FavoriteButton } from "@/components/FavoriteButton";
+import { ListingSkeleton } from "@/components/Skeleton";
+import { MapPin, Search, Mic, MicOff, LayoutGrid, Car, Home as HomeIcon, Smartphone, Sofa } from "lucide-react";
+```
+
+بدلاً من:
+
+```typescript
+import { FavoriteButton } from "@/components/FavoriteButton";`nimport { ListingSkeleton } from "@/components/Skeleton";`nimport { MapPin, Search, Mic, MicOff, LayoutGrid, Car, Home as HomeIcon, Smartphone, Sofa } from "lucide-react";
+```
+
+### 3. إنشاء ملف `src/lib/prisma.ts`
+
+**المشكلة:** الملفات تحاول استيراد `@/lib/prisma` وهو غير موجود.
+
+**الحل:** إنشاء الملف بالمحتوى التالي:
+
+```typescript
+export { prisma } from './db';
+```
+
+أو بدلاً من ذلك، تعديل جميع الاستيرادات في الملفات التالية لتشير إلى `@/lib/db` بدلاً من `@/lib/prisma`:
+- `src/app/api/feedback/route.ts`
+- `src/app/api/notifications/route.ts`
+- `src/app/api/seller/stats/route.ts`
+- `src/app/api/wishlist/route.ts`
+
+---
+
+## القسم الثاني: تحسينات الأمان
+
+### 1. تفعيل Strict Mode في TypeScript
+
+**الملف:** `tsconfig.json`
+
+**التغيير:**
+```json
+{
+  "compilerOptions": {
+    "strict": true,  // تغيير من false إلى true
+    // ... باقي الخيارات
+  }
+}
+```
+
+**الفائدة:** سيساعد على اكتشاف الأخطاء المحتملة في وقت مبكر.
+
+### 2. تحسين نظام المصادقة
+
+**الملف:** `src/app/api/auth/login/route.ts`
+
+**المشكلة الحالية:** استخدام معرّف المستخدم مباشرة في الكوكيز غير آمن.
+
+**الحل المقترح:** الاستفادة الكاملة من `NextAuth.js`:
+
+```typescript
+import { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "@/lib/db";
+import bcrypt from "bcryptjs";
+
+export const authOptions: NextAuthOptions = {
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Invalid credentials");
+        }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email }
+        });
+
+        if (!user) {
+          throw new Error("No user found");
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isPasswordValid) {
+          throw new Error("Invalid password");
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role
+        };
+      }
+    })
+  ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = (user as any).role;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        (session.user as any).id = token.id;
+        (session.user as any).role = token.role;
+      }
+      return session;
+    }
+  },
+  pages: {
+    signIn: "/login",
+    error: "/login"
+  },
+  secret: process.env.NEXTAUTH_SECRET
+};
+```
+
+---
+
+## القسم الثالث: تحسينات تجربة المطور
+
+### 1. تحديث `.env.example`
+
+```bash
+# Database Configuration
+DATABASE_URL="postgresql://suwayq_user:123456@localhost:5432/suwayq_db"
+
+# NextAuth Configuration
+NEXTAUTH_SECRET="your-super-secret-key-change-in-production"
+NEXTAUTH_URL="http://localhost:3000"
+
+# API Configuration
+NEXT_PUBLIC_API_URL="http://localhost:3000"
+
+# Cloudinary (اختياري)
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME="your-cloud-name"
+```
+
+### 2. تحديث `README.md` بقسم إعداد Docker
+
+إضافة القسم التالي إلى `README.md`:
+
+```markdown
+## 🐳 إعداد قاعدة البيانات باستخدام Docker
+
+إذا كنت تريد تشغيل قاعدة بيانات PostgreSQL محليًا، يمكنك استخدام Docker:
+
+```bash
+# تشغيل حاوية PostgreSQL
+docker-compose up -d
+
+# التحقق من أن الحاوية تعمل
+docker-compose ps
+
+# إيقاف الحاوية
+docker-compose down
+```
+
+بعد تشغيل الحاوية، استخدم بيانات الاتصال التالية في ملف `.env`:
+```
+DATABASE_URL="postgresql://suwayq_user:123456@localhost:5432/suwayq_db"
+```
+```
+
+---
+
+## القسم الرابع: اختبارات إضافية مقترحة
+
+### 1. إضافة اختبارات الوحدة (Unit Tests)
+
+يجب إضافة اختبارات للدوال الأساسية مثل:
+- اختبارات دوال المصادقة
+- اختبارات مسارات API
+- اختبارات المكونات الرئيسية
+
+### 2. إضافة اختبارات التكامل (Integration Tests)
+
+اختبار تدفقات المستخدم الكاملة مثل:
+- تسجيل مستخدم جديد
+- تسجيل الدخول
+- إنشاء إعلان
+- البحث عن إعلان
+
+---
+
+## الخلاصة
+
+بعد تطبيق الإصلاحات المذكورة أعلاه، سيكون المشروع جاهزًا للبناء والتشغيل. يوصى بتطبيق هذه الإصلاحات بالترتيب التالي:
+
+1. **أولاً:** إصلاح الملفات التالفة (القسم الأول)
+2. **ثانيًا:** تطبيق تحسينات الأمان (القسم الثاني)
+3. **ثالثًا:** تحسين تجربة المطور (القسم الثالث)
+4. **رابعًا:** إضافة الاختبارات (القسم الرابع)
