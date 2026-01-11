@@ -8,7 +8,15 @@ const nextConfig = {
   },
   reactStrictMode: true,
   swcMinify: true,
+  compress: true,
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
   experimental: {
+    optimizeCss: true,
+    optimizePackageImports: [
+      'lucide-react',
+      '@radix-ui/react-slot',
+    ],
   },
   onDemandEntries: {
     maxInactiveAge: 60 * 1000,
@@ -24,7 +32,13 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**.googleapis.com',
       },
+      {
+        protocol: 'https',
+        hostname: '**.vercel.app',
+      },
     ],
+    formats: ['image/avif', 'image/webp'],
+    minimumCacheTTL: 31536000,
   },
   skipTrailingSlashRedirect: true,
   skipMiddlewareUrlNormalize: true,
@@ -45,16 +59,25 @@ const nextConfig = {
             key: 'X-XSS-Protection',
             value: '1; mode=block',
           },
+          {
+            key: 'Referrer-Policy',
+            value: 'strict-origin-when-cross-origin',
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'geolocation=(), microphone=(), camera=()',
+          },
         ],
       },
     ];
   },
 };
 
-// Suppress static generation errors
+// Optimize for production
 if (process.env.NODE_ENV === 'production') {
   nextConfig.staticPageGenerationTimeout = 120;
   nextConfig.output = 'standalone';
+  nextConfig.productionBrowserSourceMaps = false;
 }
 
 export default nextConfig;
