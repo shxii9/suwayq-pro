@@ -1,12 +1,10 @@
 {
-  "projectName": "suwayq-pro",
   "buildCommand": "pnpm run build",
   "devCommand": "pnpm run dev",
   "installCommand": "pnpm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
   "nodeVersion": "18.x",
-  "regions": ["iad1"],
   "env": {
     "NEXTAUTH_SECRET": "@NEXTAUTH_SECRET",
     "NEXTAUTH_URL": "@NEXTAUTH_URL",
@@ -56,5 +54,7 @@
       "destination": "/",
       "permanent": true
     }
-  ]
+  ],
+  "cleanUrls": true,
+  "trailingSlash": false
 }
