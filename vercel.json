@@ -4,7 +4,6 @@
   "installCommand": "pnpm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "nodeVersion": "18.x",
   "env": {
     "NEXTAUTH_SECRET": "@NEXTAUTH_SECRET",
     "NEXTAUTH_URL": "@NEXTAUTH_URL",
@@ -28,33 +27,14 @@
           "value": "1; mode=block"
         },
         {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=31536000; includeSubDomains; preload"
+        },
+        {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
-        },
-        {
-          "key": "Strict-Transport-Security",
-          "value": "max-age=31536000; includeSubDomains"
-        },
-        {
-          "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'"
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
-    }
-  ],
-  "redirects": [
-    {
-      "source": "/old-page",
-      "destination": "/",
-      "permanent": true
-    }
-  ],
-  "cleanUrls": true,
-  "trailingSlash": false
+  ]
 }
