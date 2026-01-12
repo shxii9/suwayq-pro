@@ -14,7 +14,7 @@
         "prisma:migrate": "prisma migrate dev --name init"
     },
     "dependencies": {
-        "@prisma/client": "^5.14.0",
+        "@prisma/client": "^7.2.0",
         "@radix-ui/react-slot": "^1.2.4",
         "axios": "^1.13.2",
         "bcryptjs": "^3.0.3",
